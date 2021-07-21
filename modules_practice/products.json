@@ -1,1 +1,17 @@
-[{"price":150000},{"name":"Table"},{"id":5,"name":"Ruler","price":100000}]
+[
+    {
+        "id": 1,
+        "name": "Shoes",
+        "price": 150000
+    },
+    {
+        "id": 2,
+        "name": "Eraser",
+        "price": 200000
+    },
+    {
+        "id": 3,
+        "name": "Ruler",
+        "price": 100000
+    }
+]

@@ -77,7 +77,43 @@ const server = http.createServer((req, res) => {
                 res.end(newDatabase)
             })
         } else if (req.method === 'PATCH') {
-            
+            let link = req.url
+            let linkParse = url.parse(link, true)
+            let id = +linkParse.query.id
+
+            let data
+
+            req.on('data', (chunk) => {
+                data = chunk.toString()
+            })
+            req.on('end', () => {
+                let obj = JSON.parse(data)
+
+                let database = JSON.parse(fs.readFileSync('./products.json').toString())
+
+                let idPut = database.findIndex(item => item.id == id)
+                // console.log(obj)
+                // console.log(database[idPut])
+
+                for (let prop in obj) {
+                    // console.log(prop)
+                    for (let prop2 in database[idPut]) {
+                        // console.log(prop2)
+                        if (prop === prop2) {
+                            database[idPut][prop2] = obj[prop]
+                        }
+                    }
+                }
+
+                // console.log(database[idPut])
+
+                fs.writeFileSync('./products.json', JSON.stringify(database))
+
+                let newDatabase = fs.readFileSync('./products.json')
+
+                res.writeHead(200, headers)
+                res.end(newDatabase)
+            })
         }
     }
 })
