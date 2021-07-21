@@ -1,28 +1,85 @@
-// module buatan sendiri
-const { pengurangan, penjumlahan } = require('./myModules')
-
-// console.log(pengurangan(10, 5))
-// console.log(penjumlahan(10, 5))
-
-// module built-in dari node js
-const timers = require('timers')
-// timers.setTimeout(() => console.log('ini module timers'), 5000)
-
+const http = require('http')
+const fs = require('fs')
 const url = require('url')
-let link = 'http://frengky.code/data.html?online=yes&job=coder'
+const PORT = 2000
 
-let linkParse = url.parse(link, true)
+const server = http.createServer((req, res) => {
+    const headers = {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, PUT, PATCH, DELETE",
+    }
 
-// console.log(linkParse.hostname)
-// console.log(linkParse.pathname)
-// console.log(linkParse.query)
-// console.log(linkParse.search)
+    if (req.url.includes('products')) {
+        if (req.method === 'GET') {
+            // cara ambil data dari products.json
+            let database = fs.readFileSync('./products.json')
 
-// module download from npm
-const colors = require('colors')
-// console.log('INI WARNA MERAH'.red)
-// console.log('INI BG KUNING'.bgYellow.black)
+            res.writeHead(200, headers)
+            res.end(database)
+        } else if (req.method === 'POST') {
+            let data
 
-const moment = require('moment')
-let today = moment().format('dddd, MMMM Do YYYY, hh:mm:ss A')
-console.log(today)
+            req.on('data', (chunk) => {
+                data = chunk.toString()
+            })
+            req.on('end', () => {
+                let obj = JSON.parse(data)
+
+                let database = JSON.parse(fs.readFileSync('./products.json').toString())
+                database.push(obj)
+
+                fs.writeFileSync('./products.json', JSON.stringify(database))
+
+                let newDatabase = fs.readFileSync('./products.json')
+
+                res.writeHead(200, headers)
+                res.end(newDatabase)
+            })
+        } else if (req.method === 'DELETE') {
+            let link = req.url
+            let linkParse = url.parse(link, true)
+            let id = +linkParse.query.id
+
+            let database = JSON.parse(fs.readFileSync('./products.json').toString())
+            let delDatabase = database.filter(item => item.id !== id)
+            console.log(delDatabase)
+
+            fs.writeFileSync('./products.json', JSON.stringify(delDatabase))
+
+            let newDatabase = fs.readFileSync('./products.json')
+
+            res.writeHead(200, headers)
+            res.end(newDatabase)
+        } else if (req.method === 'PUT') {
+            let link = req.url
+            let linkParse = url.parse(link, true)
+            let id = +linkParse.query.id
+
+            let data
+
+            req.on('data', (chunk) => {
+                data = chunk.toString()
+            })
+            req.on('end', () => {
+                let obj = JSON.parse(data)
+
+                let database = JSON.parse(fs.readFileSync('./products.json').toString())
+
+                let idPut = database.findIndex(item => item.id == id)
+                database.splice(idPut, 1, obj)
+
+                fs.writeFileSync('./products.json', JSON.stringify(database))
+
+                let newDatabase = fs.readFileSync('./products.json')
+
+                res.writeHead(200, headers)
+                res.end(newDatabase)
+            })
+        } else if (req.method === 'PATCH') {
+            
+        }
+    }
+})
+
+server.listen(PORT, () => console.log(`Server is Running at PORT : ${PORT}`))
