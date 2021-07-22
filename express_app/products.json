@@ -1,31 +1,17 @@
-{
-    "products": [
-        {
-            "id": 4,
-            "name": "Eraser",
-            "price": 400000
-        },
-        {
-            "id": 7,
-            "name": "Bag",
-            "price": 200000
-        },
-        {
-            "id": 8,
-            "name": "Table",
-            "price": 100000
-        }
-    ],
-    "users": [
-        {
-            "id": 1,
-            "username": "Andrew",
-            "password": "andrew123"
-        },
-        {
-            "id": 2,
-            "username": "Alisa",
-            "password": "alisa123"
-        }
-    ]
-}
+[
+    {
+        "id": 4,
+        "name": "Eraser",
+        "price": 400000
+    },
+    {
+        "id": 7,
+        "name": "Bag",
+        "price": 200000
+    },
+    {
+        "id": 8,
+        "name": "Table",
+        "price": 100000
+    }
+]

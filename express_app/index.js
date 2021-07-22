@@ -77,7 +77,6 @@ server.patch('/products/:id', (req, res) => {
 })
 
 // TUGAS!
-// 1. Sesuaikan algoritma request kita dengan bentuk database (products.json) yang terbaru
-// 2. Buat request untuk get all user, login, register
+// 1. Buat request untuk get all user, login, register
 
 server.listen(PORT, () => console.log(`Server is Running at PORT : ${PORT}`))
