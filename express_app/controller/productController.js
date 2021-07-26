@@ -7,6 +7,11 @@ module.exports = {
     },
     addProduct: (req, res) => {
         let database = JSON.parse(fs.readFileSync('./products.json'))
+        console.log(req.body)
+
+        let newProductID = database[database.length - 1].id + 1
+        req.body.id = newProductID
+
         database.push(req.body)
 
         fs.writeFileSync('./products.json', JSON.stringify(database))
