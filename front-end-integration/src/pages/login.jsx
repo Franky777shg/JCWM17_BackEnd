@@ -1,4 +1,5 @@
 import React from 'react'
+import Axios from 'axios'
 import {
     FormControl,
     InputGroup,
@@ -7,6 +8,7 @@ import {
 } from 'react-bootstrap'
 import { Link, Redirect } from 'react-router-dom'
 import { connect } from 'react-redux'
+import { login, closeModal } from '../redux/actions'
 
 class LoginPage extends React.Component {
     constructor(props) {
@@ -27,7 +29,6 @@ class LoginPage extends React.Component {
         // ambil data dari input username dan password
         let username = this.refs.username.value
         let password = this.refs.password.value
-        // console.log(username, password)
 
         // kalau ada input yang masih kosong kita notif bahwa data tidak boleh kosong
         if (!username || !password) {
@@ -35,10 +36,14 @@ class LoginPage extends React.Component {
         }
 
         // cek apakah data yang dikirim oleh user sudah ada di daftar users di database
-        // this.props.login(username, password)
+        this.props.login({ username, password })
     }
 
     render() {
+        if (this.props.username) {
+            return <Redirect to='/' />
+        }
+
         const { visibility } = this.state
         return (
             // <h1>Hello World</h1>
@@ -79,19 +84,19 @@ class LoginPage extends React.Component {
                     <p style={styles.goToRegis}>Do You Have an Account? <Link style={{ color: '#303f9f', fontWeight: 'bold' }} to="/register">Register Here</Link></p>
                     <p style={styles.goToRegis}>Go to <Link style={{ color: '#303f9f', fontWeight: 'bold' }} to="/">Home</Link></p>
                 </div>
-                {/* <Modal show={this.state.error}>
+                <Modal show={this.props.failedLogin}>
                     <Modal.Header>
                         <Modal.Title>Error</Modal.Title>
                     </Modal.Header>
 
                     <Modal.Body>
-                        <p>Please input all of data!</p>
+                        <p>{this.props.msgFailedLogin}</p>
                     </Modal.Body>
 
                     <Modal.Footer>
-                        <Button onClick={() => this.setState({ error: false })} variant="primary">OK</Button>
+                        <Button onClick={this.props.closeModal} variant="primary">OK</Button>
                     </Modal.Footer>
-                </Modal> */}
+                </Modal>
             </div >
         )
     }
@@ -128,4 +133,12 @@ const styles = {
     }
 }
 
-export default LoginPage
+const mapStateToProps = (state) => {
+    return {
+        username: state.userReducer.username,
+        failedLogin: state.userReducer.failedLogin,
+        msgFailedLogin: state.userReducer.msgFailedLogin
+    }
+}
+
+export default connect(mapStateToProps, { login, closeModal })(LoginPage)

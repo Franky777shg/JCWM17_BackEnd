@@ -14,7 +14,7 @@ module.exports = {
 
         if (result.length === 0) return res.status(400).send('Username/Password is Invalid')
 
-        res.status(200).send(`Welcome ${username}!`)
+        res.status(200).send(result[0])
     },
     register: (req, res) => {
         const { id, username, password } = req.body

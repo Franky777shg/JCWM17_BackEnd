@@ -17,21 +17,6 @@ class App extends React.Component {
   }
 
   render() {
-    // console.log(this.props.role)
-    // if (this.props.role === 'admin') {
-    //   return (
-    //     <div style={{ backgroundColor: '#A3DDCB' }}>
-    //       <Switch>
-    //         <Route path="/" component={HomePage} exact />
-    //         <Route path="/login" component={LoginPage} />
-    //         <Route path="/register" component={RegisPage} />
-    //         <Route path="/detail" component={DetailPage} />
-    //         <Route path="/historyadmin" component={HistoryAdmin} />
-    //         <Route path="*" component={NotFound} />
-    //       </Switch>
-    //     </div>
-    //   )
-    // }
     return (
       <div style={{ backgroundColor: '#A3DDCB' }}>
         <Switch>

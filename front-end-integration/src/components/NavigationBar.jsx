@@ -6,6 +6,7 @@ import {
     Container
 } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
+import { connect } from 'react-redux'
 
 class NavigationBar extends React.Component {
     constructor(props) {
@@ -25,7 +26,7 @@ class NavigationBar extends React.Component {
                         </Nav>
                         <Dropdown>
                             <Dropdown.Toggle variant="success" id="dropdown-basic">
-                                Dropdown Button
+                                {this.props.username ? this.props.username : "Username"}
                             </Dropdown.Toggle>
                             <Dropdown.Menu>
                                 <Dropdown.Item as={Link} to="/login">Login</Dropdown.Item>
@@ -39,4 +40,10 @@ class NavigationBar extends React.Component {
     }
 }
 
-export default NavigationBar;
+const mapStateToProps = (state) => {
+    return {
+        username: state.userReducer.username
+    }
+}
+
+export default connect(mapStateToProps)(NavigationBar);
