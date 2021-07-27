@@ -8,12 +8,11 @@ import LoginPage from './pages/login';
 import RegisPage from './pages/register';
 
 // import action
-// import { keepLogin } from './redux/actions'
+import { keepLogin } from './redux/actions'
 
 class App extends React.Component {
   componentDidMount() {
-    let id = localStorage.getItem('idUser')
-    // this.props.keepLogin(id)
+    this.props.keepLogin()
   }
 
   render() {
@@ -35,5 +34,4 @@ class App extends React.Component {
 //   }
 // }
 
-// export default connect(mapStateToProps, { keepLogin })(App);
-export default App;
+export default connect(null, { keepLogin })(App);

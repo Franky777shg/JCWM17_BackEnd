@@ -1,14 +1,12 @@
 const fs = require('fs')
+const database = JSON.parse(fs.readFileSync('./users.json'))
 
 module.exports = {
     getAllUsers: (req, res) => {
-        let database = fs.readFileSync('./users.json')
-        res.status(200).send(JSON.parse(database))
+        res.status(200).send(database)
     },
     login: (req, res) => {
         const { username, password } = req.body
-
-        let database = JSON.parse(fs.readFileSync('./users.json'))
 
         let result = database.filter(item => item.username === username && item.password === password)
 
@@ -20,8 +18,6 @@ module.exports = {
         const { id, username, password } = req.body
 
         if (!id || !username || !password) return res.status(400).send('Input all of data!')
-
-        let database = JSON.parse(fs.readFileSync('./users.json'))
 
         let checkUsername = database.filter(item => item.username === username)
 
@@ -35,5 +31,12 @@ module.exports = {
             status: "Register Success",
             data: req.body
         })
+    },
+    keeplogin: (req, res) => {
+        const idUser = +req.params.id
+
+        let searchUser = database.filter(item => item.id === idUser)
+
+        res.status(200).send(searchUser[0])
     }
 }

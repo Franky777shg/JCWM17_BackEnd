@@ -7,6 +7,7 @@ import {
 } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
+import { logout } from '../redux/actions'
 
 class NavigationBar extends React.Component {
     constructor(props) {
@@ -29,8 +30,15 @@ class NavigationBar extends React.Component {
                                 {this.props.username ? this.props.username : "Username"}
                             </Dropdown.Toggle>
                             <Dropdown.Menu>
-                                <Dropdown.Item as={Link} to="/login">Login</Dropdown.Item>
-                                <Dropdown.Item as={Link} to="/register">Register</Dropdown.Item>
+                                {this.props.username
+                                    ?
+                                    <Dropdown.Item onClick={this.props.logout}>Logout</Dropdown.Item>
+                                    :
+                                    <>
+                                        <Dropdown.Item as={Link} to="/login">Login</Dropdown.Item>
+                                        <Dropdown.Item as={Link} to="/register">Register</Dropdown.Item>
+                                    </>
+                                }
                             </Dropdown.Menu>
                         </Dropdown>
                     </Navbar.Collapse>
@@ -46,4 +54,4 @@ const mapStateToProps = (state) => {
     }
 }
 
-export default connect(mapStateToProps)(NavigationBar);
+export default connect(mapStateToProps, { logout })(NavigationBar);
