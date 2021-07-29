@@ -125,6 +125,108 @@ from employees em
 inner join offices o
 on em.officeCode = o.officeCode;
 
+-- LEFT JOIN
+select c.customerNumber, c.customerName, o.*
+from customers c
+left join orders o
+on o.customerNumber = c.customerNumber;
+
+-- RIGHT JOIN
+select o.*, c.customerNumber, c.customerName
+from orders o
+right join customers c
+on o.customerNumber = c.customerNumber;
+
+-- Melihat daftar customer yang belum melakukan pembelian
+select c.customerNumber, c.customerName, o.*
+from customers c
+left join orders o
+on o.customerNumber = c.customerNumber
+where o.orderNumber is null;
+
+-- Melihat daftar user yang membeli melalui sales
+select c.customerNumber, c.customerName, e.employeeNumber, e.lastName,
+e.firstName, e.email
+from customers c
+left join employees e
+on c.salesRepEmployeeNumber = e.employeeNumber
+where e.employeeNumber is not null;
+
+-- Melihat daftar atasan tiap employee
+select t1.employeeNumber, t1.lastName, t1.firstName, t1.reportsTo,
+t2.employeeNumber, t2.lastName, t2.firstName
+from employees t1
+left join employees t2
+on t1.reportsTo = t2.employeeNumber;
+
+-- EXERCISE
+use classicmodels;
+-- dapatkan data dari table customers, ambil kolom customer name, city, state, country, cari yang country nya di USA dan France, 
+-- order by customer name, limit 5 dimulai setelah data ke 3
+select customerName, city, state, country from customers where country in ('USA', 'France') order by customerName
+limit 3, 5;
+
+-- get data customer salesRepEmploye !== null, country = germany, nama mengandung huruf n, dan urutkan berdarkan nama
+select customerNumber, customerName, concat(contactFirstName, ' ', contactLastName) as Owner, salesRepEmployeeNumber from customers 
+where salesRepEmployeeNumber is not null
+and country = 'Germany'
+and customerName like '%n%'
+order by customerName;
+
+-- get data customer salerRepEmployee != null dan credit limit > 60000, 
+-- urutkan berdasarkan credit limit dan di kasih limit 4 data dimulai setelah data ke 10
+select * from customers
+where salesRepEmployeeNumber is not null
+and creditLimit > 60000
+order by creditLimit
+limit 10, 4;
+
+-- hitung total customer per country, cari country yang rata2 credit limit nya di atas 50000
+select country, count(*) as Total_Cust_Per_Country, avg(creditLimit) as Avg_Credit_Limit from customers
+group by country having Avg_Credit_Limit > 50000
+order by Avg_Credit_Limit;
+
+-- SUBQUERY
+-- Example 1
+SELECT officeCode FROM offices WHERE country = 'USA';
+
+SELECT lastName, firstName
+FROM employees
+WHERE officeCode
+IN (SELECT officeCode FROM offices WHERE country = 'USA');
+
+-- Example 2
+SELECT MAX(amount) FROM payments;
+
+SELECT 
+    customerNumber, 
+    checkNumber, 
+    amount
+FROM
+    payments
+WHERE
+    amount = (SELECT MAX(amount) FROM payments);
+
+-- VIEW
+-- kita mau menyimpan hasil untuk data credit limit customer tertinggi tiap negara dari tabel customers
+create view HighestCreditLimitCustomerPerCountry
+as
+select country, max(creditLimit) as Highest_Credit_Limit from customers group by country 
+order by Highest_Credit_Limit desc;
+
+select * from HighestCreditLimitCustomerPerCountry;
+
+-- EVENT SCHEDULER
+use kantor;
+select * from karyawan;
+show variables like 'event_scheduler';
+
+create event add_karyawan on schedule every 5 second
+do insert into karyawan (nama, gaji, posisi) values ('Franco', 7000000, 'Sales');
+
+drop event add_karyawan;
+
+
 
 
 
