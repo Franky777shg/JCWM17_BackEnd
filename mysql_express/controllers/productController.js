@@ -13,4 +13,9 @@ module.exports = {
             res.status(200).send(result)
         })
     }
+    // TUGAS!
+    // 1. get product by id
+    // 2. add product
+    // 3. delete product
+    // 4. edit product
 }
