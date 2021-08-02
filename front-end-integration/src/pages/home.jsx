@@ -3,7 +3,8 @@ import Axios from 'axios'
 import {
   Table,
   Button,
-  Form
+  Form,
+  Dropdown
 } from 'react-bootstrap'
 
 import NavigationBar from '../components/NavigationBar'
@@ -20,7 +21,7 @@ class HomePage extends React.Component {
   }
 
   fetchData = () => {
-    Axios.get(`${URL_API}/getAllProducts`)
+    Axios.get(`${URL_API}/get-product`)
       .then(res => {
         // console.log(res.data)
         this.setState({ products: res.data })
@@ -41,6 +42,7 @@ class HomePage extends React.Component {
           <th>#</th>
           <th>Product Name</th>
           <th>Product Price</th>
+          <th>Product Quantity</th>
           <th>Action</th>
         </tr>
       </thead>
@@ -51,14 +53,15 @@ class HomePage extends React.Component {
     return (
       <tbody>
         {this.state.products.map((item, index) => {
-          if (this.state.idEdit === item.id) {
+          if (this.state.idEdit === item.idproducts) {
             return (
               <tr key={index}>
                 <td>#</td>
                 <td><Form.Control ref="nameEdit" defaultValue={item.name} type="text" /></td>
                 <td><Form.Control ref="priceEdit" defaultValue={item.price} type="number" /></td>
+                <td><Form.Control ref="qtyEdit" defaultValue={item.quantity} type="number" /></td>
                 <td>
-                  <Button variant="outline-success" onClick={() => this.onSave(item.id)}>Save</Button>
+                  <Button variant="outline-success" onClick={() => this.onSave(item.idproducts)}>Save</Button>
                   <Button variant="outline-danger" onClick={() => this.setState({ idEdit: null })}>Cancel</Button>
                 </td>
               </tr>
@@ -66,12 +69,13 @@ class HomePage extends React.Component {
           }
           return (
             <tr key={index}>
-              <td>{item.id}</td>
+              <td>{item.idproducts}</td>
               <td>{item.name}</td>
               <td>{item.price}</td>
+              <td>{item.quantity}</td>
               <td>
-                <Button variant="outline-warning" onClick={() => this.setState({ idEdit: item.id })}>Edit</Button>
-                <Button variant="outline-danger" onClick={() => this.onDelete(item.id)}>Delete</Button>
+                <Button variant="outline-warning" onClick={() => this.setState({ idEdit: item.idproducts })}>Edit</Button>
+                <Button variant="outline-danger" onClick={() => this.onDelete(item.idproducts)}>Delete</Button>
               </td>
             </tr>
           )
@@ -86,7 +90,8 @@ class HomePage extends React.Component {
         <tr>
           <td>#</td>
           <td><Form.Control ref="name" type="text" placeholder="Enter Product Name" /></td>
-          <td><Form.Control ref="price" type="number" placeholder="Enter Price Name" /></td>
+          <td><Form.Control ref="price" type="number" placeholder="Enter Product Price" /></td>
+          <td><Form.Control ref="quantity" type="number" placeholder="Enter Product Quantity" /></td>
           <td><Button variant="outline-success" onClick={this.onSubmit}>Submit</Button></td>
         </tr>
       </tfoot>
@@ -96,14 +101,16 @@ class HomePage extends React.Component {
   onSubmit = () => {
     const name = this.refs.name.value
     const price = +this.refs.price.value
+    const quantity = +this.refs.quantity.value
 
-    const data = {
+    const body = {
       name,
-      price
+      price,
+      quantity
     }
-    console.log(data)
+    console.log(body)
 
-    Axios.post(`${URL_API}/add-product`, data)
+    Axios.post(`${URL_API}/add-product`, body)
       .then(res => {
         this.setState({ products: res.data })
         this.refs.name.value = ""
@@ -128,16 +135,29 @@ class HomePage extends React.Component {
   onSave = (id) => {
     const nameEdit = this.refs.nameEdit.value
     const priceEdit = +this.refs.priceEdit.value
+    const qtyEdit = +this.refs.qtyEdit.value
 
-    const data = {
+    const body = {
       name: nameEdit,
-      price: priceEdit
+      price: priceEdit,
+      quantity: qtyEdit
     }
-    console.log(data)
+    console.log(body)
+    console.log(id)
 
-    Axios.patch(`${URL_API}/patch-product/${id}`, data)
+    Axios.patch(`${URL_API}/update-product/${id}`, body)
       .then(res => {
         this.setState({ products: res.data, idEdit: null })
+      })
+      .catch(err => {
+        console.log(err)
+      })
+  }
+
+  onSortName = () => {
+    Axios.get(`${URL_API}/sort-name`)
+      .then(res => {
+        this.setState({ products: res.data })
       })
       .catch(err => {
         console.log(err)
@@ -149,7 +169,19 @@ class HomePage extends React.Component {
     return (
       <div>
         <NavigationBar />
-        <h1>CRUD PRODUCT</h1>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <h1>CRUD PRODUCT</h1>
+          <Dropdown>
+            <Dropdown.Toggle variant="success" id="dropdown-basic">
+              Sorting By
+            </Dropdown.Toggle>
+            <Dropdown.Menu>
+              <Dropdown.Item >Name</Dropdown.Item>
+              <Dropdown.Item >Price</Dropdown.Item>
+              <Dropdown.Item >Quantity</Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
+        </div>
         <Table striped bordered hover variant="dark">
           {this.renderTHead()}
           {this.renderTBody()}
