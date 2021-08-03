@@ -8,7 +8,7 @@ import {
 } from 'react-bootstrap'
 import { Link, Redirect } from 'react-router-dom'
 import { connect } from 'react-redux'
-import { register } from '../redux/actions'
+import { register, closeModalFailedRegis } from '../redux/actions'
 
 class RegisPage extends React.Component {
     constructor(props) {
@@ -166,17 +166,17 @@ class RegisPage extends React.Component {
                         </Button>
                     </Modal.Footer>
                 </Modal>
-                {/* <Modal show={this.props.errorReg[0]}>
+                <Modal show={this.props.failedRegis}>
                     <Modal.Header>
                         <Modal.Title>Error!</Modal.Title>
                     </Modal.Header>
-                    <Modal.Body>{this.props.errorReg[1]}</Modal.Body>
+                    <Modal.Body>{this.props.msgFailedRegis}</Modal.Body>
                     <Modal.Footer>
-                        <Button variant="primary" onClick={this.props.resetRegErr}>
+                        <Button variant="primary" onClick={this.props.closeModalFailedRegis}>
                             OK
                         </Button>
                     </Modal.Footer>
-                </Modal> */}
+                </Modal>
             </div>
         )
     }
@@ -230,8 +230,10 @@ const styles = {
 
 const mapStateToProps = (state) => {
     return {
-        successReg: state.userReducer.successRegister
+        successReg: state.userReducer.successRegister,
+        failedRegis: state.userReducer.failedRegister,
+        msgFailedRegis: state.userReducer.msgFailedRegis
     }
 }
 
-export default connect(mapStateToProps, { register })(RegisPage)
+export default connect(mapStateToProps, { register, closeModalFailedRegis })(RegisPage)

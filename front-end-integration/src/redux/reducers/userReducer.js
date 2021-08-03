@@ -5,7 +5,9 @@ const INITIAL_STATE = {
     email: "",
     failedLogin: false,
     msgFailedLogin: "",
-    successRegister: false
+    successRegister: false,
+    failedRegister: false,
+    msgFailedRegis: ''
 }
 
 const userReducer = (state = INITIAL_STATE, action) => {
@@ -36,6 +38,18 @@ const userReducer = (state = INITIAL_STATE, action) => {
             return {
                 ...state,
                 successRegister: true
+            }
+        case 'FAILED_REGIS':
+            return {
+                ...state,
+                failedRegister: true,
+                msgFailedRegis: action.payload
+            }
+        case 'CLOSE_MODAL_FAILED_REGIS':
+            return {
+                ...state,
+                failedRegister: false,
+                msgFailedRegis: ''
             }
         default:
             return state

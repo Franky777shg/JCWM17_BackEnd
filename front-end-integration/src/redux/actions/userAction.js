@@ -48,13 +48,15 @@ export const keepLogin = () => {
     return (dispatch) => {
         const idUser = localStorage.getItem('idUser')
 
-        Axios.get(`${URL_API}/keeplogin/${idUser}`)
-            .then(res => {
-                dispatch({
-                    type: 'LOGIN',
-                    payload: res.data
+        if (idUser) {
+            Axios.get(`${URL_API}/keeplogin/${idUser}`)
+                .then(res => {
+                    dispatch({
+                        type: 'LOGIN',
+                        payload: res.data[0]
+                    })
                 })
-            })
+        }
     }
 }
 
@@ -69,6 +71,18 @@ export const register = (body) => {
             })
             .catch(err => {
                 console.log(err)
+                dispatch({
+                    type: 'FAILED_REGIS',
+                    payload: err.response.data
+                })
             })
+    }
+}
+
+export const closeModalFailedRegis = () => {
+    return (dispatch) => {
+        dispatch({
+            type: 'CLOSE_MODAL_FAILED_REGIS'
+        })
     }
 }

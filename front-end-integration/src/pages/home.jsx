@@ -17,8 +17,9 @@ class HomePage extends React.Component {
     this.state = {
       products: [],
       idEdit: null,
-      sorting: ['name', 'asc'],
-      method: false
+      methodName: false,
+      methodPrice: false,
+      methodQty: false,
     }
   }
 
@@ -157,16 +158,23 @@ class HomePage extends React.Component {
   }
 
   onSortMethod = async (sort) => {
-    await this.setState({ method: !this.state.method })
-    const method = this.state.method ? 'asc' : 'desc'
-    await this.setState({ sorting: [sort, method] })
-    this.onSorting()
+    let method
+
+    if (sort == 'name') {
+      await this.setState({ methodName: !this.state.methodName })
+      method = this.state.methodName ? 'asc' : 'desc'
+    } else if (sort == 'price') {
+      await this.setState({ methodPrice: !this.state.methodPrice })
+      method = this.state.methodPrice ? 'asc' : 'desc'
+    } else if (sort == 'quantity') {
+      await this.setState({ methodQty: !this.state.methodQty })
+      method = this.state.methodQty ? 'asc' : 'desc'
+    }
+
+    this.onSorting(sort, method)
   }
 
-  onSorting = () => {
-    const sort = this.state.sorting[0]
-    const method = this.state.sorting[1]
-    
+  onSorting = (sort, method) => {
     Axios.get(`${URL_API}/sort-name/${sort}/${method}`)
       .then(res => {
         this.setState({ products: res.data, sorting: ['name', 'asc'] })

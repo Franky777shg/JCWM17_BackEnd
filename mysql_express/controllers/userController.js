@@ -10,7 +10,7 @@ module.exports = {
         db.query(getUser, (err, result) => {
             if (err) {
                 console.log(err)
-                res.status(400).send(result)
+                res.status(400).send(err)
             }
 
             res.status(200).send(result)
@@ -29,17 +29,17 @@ module.exports = {
         db.query(checkUser, (err, result) => {
             if (err) {
                 console.log(err)
-                res.status(400).send(result)
+                res.status(400).send(err)
             } else if (result.length !== 0) {
                 res.status(400).send('Username already used!')
             } else if (result.length === 0) {
 
                 const addUser = `insert into users set ?`
 
-                db.query(addUser, req.body, (err, result) => {
-                    if (err) {
-                        console.log(err)
-                        res.status(400).send(result)
+                db.query(addUser, req.body, (err2, result2) => {
+                    if (err2) {
+                        console.log(err2)
+                        res.status(400).send(err2)
                     }
 
                     res.status(200).send('berhasil')
@@ -47,5 +47,17 @@ module.exports = {
             }
         })
 
+    },
+    keeplogin: (req, res) => {
+        const getUser = `select * from users where idusers = ${db.escape(req.params.id)}`
+
+        db.query(getUser, (err, result) => {
+            if (err) {
+                console.log(err)
+                res.status(400).send(err)
+            }
+
+            res.status(200).send(result)
+        })
     }
 }
