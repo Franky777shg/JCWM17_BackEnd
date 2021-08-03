@@ -7,6 +7,6 @@ router.get('/get-product/:id', productController.getProductById)
 router.post('/add-product', productController.addProduct)
 router.delete('/delete-product/:id', productController.deleteProduct)
 router.patch('/update-product/:id', productController.updateProduct)
-router.get('/sort-name', productController.sortingProduct)
+router.get('/sort-name/:sort/:method', productController.sortingProduct)
 
 module.exports = router

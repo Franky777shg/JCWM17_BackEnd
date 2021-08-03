@@ -34,8 +34,8 @@ class LoginPage extends React.Component {
         if (!username || !password) {
             return this.setState({ error: true })
         }
+        // console.log(username, password)
 
-        // cek apakah data yang dikirim oleh user sudah ada di daftar users di database
         this.props.login({ username, password })
     }
 

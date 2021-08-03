@@ -6,19 +6,23 @@ export const login = (data) => {
     return (dispatch) => {
         Axios.post(`${URL_API}/login`, data)
             .then(res => {
-                localStorage.setItem('idUser', res.data.id)
+                console.log(res.data)
+                if (res.data.length !== 0) {
+                    localStorage.setItem('idUser', res.data[0].idusers)
 
-                dispatch({
-                    type: 'LOGIN',
-                    payload: res.data
-                })
+                    dispatch({
+                        type: 'LOGIN',
+                        payload: res.data[0]
+                    })
+                } else {
+                    dispatch({
+                        type: 'FAILED_LOGIN',
+                        payload: 'Username/Password is Invalid'
+                    })
+                }
             })
             .catch(err => {
-                dispatch({
-                    type: 'FAILED_LOGIN',
-                    payload: err.response.data
-                })
-                console.log(err.response.data)
+                console.log(err)
             })
     }
 }
@@ -50,6 +54,21 @@ export const keepLogin = () => {
                     type: 'LOGIN',
                     payload: res.data
                 })
+            })
+    }
+}
+
+export const register = (body) => {
+    return (dispatch) => {
+        Axios.post(`${URL_API}/register`, body)
+            .then(res => {
+                console.log(res.data)
+                dispatch({
+                    type: 'SUCCESS_REGIS'
+                })
+            })
+            .catch(err => {
+                console.log(err)
             })
     }
 }

@@ -8,7 +8,7 @@ import {
 } from 'react-bootstrap'
 import { Link, Redirect } from 'react-router-dom'
 import { connect } from 'react-redux'
-// import { register, resetRegErr } from '../redux/actions'
+import { register } from '../redux/actions'
 
 class RegisPage extends React.Component {
     constructor(props) {
@@ -64,22 +64,22 @@ class RegisPage extends React.Component {
         if (this.refs.confpassword.value !== password) return this.setState({ registerErr: [true, "Confirm password doesn't match with password"] })
 
         // siapkan object data user
-        let obj = {
+        let body = {
             username,
             email,
-            password,
-            role: 'user',
-            cart: []
+            password
         }
+        console.log(body)
 
         // action untuk register
-        // this.props.register(username, email, obj)
+        this.props.register(body)
     }
 
     render() {
-        // if (this.props.successReg) {
-        //     return <Redirect to="/login" />
-        // }
+        if (this.props.successReg) {
+            return <Redirect to="/login" />
+        }
+        
         const { visibility1, visibility2 } = this.state
         return (
             <div style={styles.contUtama}>
@@ -228,12 +228,10 @@ const styles = {
     }
 }
 
-// const mapStateToProps = (state) => {
-//     return {
-//         errorReg: state.userReducer.errorRegister,
-//         successReg: state.userReducer.successRegister
-//     }
-// }
+const mapStateToProps = (state) => {
+    return {
+        successReg: state.userReducer.successRegister
+    }
+}
 
-// export default connect(mapStateToProps, { register, resetRegErr })(RegisPage)
-export default RegisPage
+export default connect(mapStateToProps, { register })(RegisPage)

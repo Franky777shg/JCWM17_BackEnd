@@ -88,7 +88,7 @@ module.exports = {
         })
     },
     sortingProduct: (req, res) => {
-        const sortingProduct = `select * from products order by name;`
+        const sortingProduct = `select * from products order by ${req.params.sort} ${req.params.method};`
 
         db.query(sortingProduct, (err, result) => {
             if (err) {

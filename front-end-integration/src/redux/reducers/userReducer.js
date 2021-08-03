@@ -2,8 +2,10 @@ const INITIAL_STATE = {
     id: null,
     username: "",
     password: "",
+    email: "",
     failedLogin: false,
-    msgFailedLogin: ""
+    msgFailedLogin: "",
+    successRegister: false
 }
 
 const userReducer = (state = INITIAL_STATE, action) => {
@@ -11,9 +13,10 @@ const userReducer = (state = INITIAL_STATE, action) => {
         case 'LOGIN':
             return {
                 ...state,
-                id: action.payload.id,
+                id: action.payload.idusers,
                 username: action.payload.username,
-                password: action.payload.password
+                password: action.payload.password,
+                email: action.payload.email
             }
         case 'FAILED_LOGIN':
             return {
@@ -29,6 +32,11 @@ const userReducer = (state = INITIAL_STATE, action) => {
             }
         case 'LOG_OUT':
             return INITIAL_STATE
+        case 'SUCCESS_REGIS':
+            return {
+                ...state,
+                successRegister: true
+            }
         default:
             return state
     }

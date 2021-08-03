@@ -23,7 +23,8 @@ app.get('/', (req, res) => {
     res.status(200).send(`<h1>Welcome to My API!</h1>`)
 })
 
-const { productRouter } = require('./routers')
+const { productRouter, userRouter } = require('./routers')
 app.use('/product', productRouter)
+app.use('/user', userRouter)
 
 app.listen(PORT, () => console.log(`Server Running at PORT: ${PORT}`))

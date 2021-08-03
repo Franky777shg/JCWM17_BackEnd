@@ -16,7 +16,9 @@ class HomePage extends React.Component {
     super(props);
     this.state = {
       products: [],
-      idEdit: null
+      idEdit: null,
+      sorting: ['name', 'asc'],
+      method: false
     }
   }
 
@@ -40,9 +42,9 @@ class HomePage extends React.Component {
       <thead>
         <tr>
           <th>#</th>
-          <th>Product Name</th>
-          <th>Product Price</th>
-          <th>Product Quantity</th>
+          <th onClick={() => this.onSortMethod('name')}>Product Name</th>
+          <th onClick={() => this.onSortMethod('price')}>Product Price</th>
+          <th onClick={() => this.onSortMethod('quantity')}>Product Quantity</th>
           <th>Action</th>
         </tr>
       </thead>
@@ -154,10 +156,20 @@ class HomePage extends React.Component {
       })
   }
 
-  onSortName = () => {
-    Axios.get(`${URL_API}/sort-name`)
+  onSortMethod = async (sort) => {
+    await this.setState({ method: !this.state.method })
+    const method = this.state.method ? 'asc' : 'desc'
+    await this.setState({ sorting: [sort, method] })
+    this.onSorting()
+  }
+
+  onSorting = () => {
+    const sort = this.state.sorting[0]
+    const method = this.state.sorting[1]
+    
+    Axios.get(`${URL_API}/sort-name/${sort}/${method}`)
       .then(res => {
-        this.setState({ products: res.data })
+        this.setState({ products: res.data, sorting: ['name', 'asc'] })
       })
       .catch(err => {
         console.log(err)
@@ -165,7 +177,6 @@ class HomePage extends React.Component {
   }
 
   render() {
-    console.log(this.state.products)
     return (
       <div>
         <NavigationBar />
