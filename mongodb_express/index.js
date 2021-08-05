@@ -67,12 +67,18 @@ app.post('/add-data', (req, res) => {
     })
 
     newProduct.save()
-        .then(result => {
-            console.log(result)
-            res.status(200).send(result)
+        .then(() => {
+            Product.find()
+                .then(result => {
+                    console.log(result)
+                    res.status(200).send(result)
+                })
+                .catch(err => {
+                    res.status(400).send(err)
+                })
         })
         .catch(err => {
-            console.log(err)
+            res.status(400).send(err)
         })
 })
 
@@ -84,26 +90,97 @@ app.get('/get-data', (req, res) => {
             res.status(200).send(result)
         })
         .catch(err => {
-            console.log(err)
+            res.status(400).send(err)
         })
 })
 
 // filtering
-app.get('/filter-data', (req, res) => {
-    Product.find({ category: "Cloth" })
+app.post('/filter-data', (req, res) => {
+    Product.find(req.body)
         .then(result => {
             console.log(result)
             res.status(200).send(result)
         })
         .catch(err => {
-            console.log(err)
+            res.status(400).send(err)
         })
 })
 
-// TUGAS!
-// 1. filter flexible
-// 2. update
-// 3. delete
-// 4. get by id
+// get data by id
+app.get('/get-data-id/:id', (req, res) => {
+    Product.findById(req.params.id)
+        .then(result => {
+            console.log(result)
+            res.status(200).send(result)
+        })
+        .catch(err => {
+            res.status(400).send(err)
+        })
+})
+
+// delete data
+app.delete('/delete-data/:id', (req, res) => {
+    Product.findByIdAndDelete(req.params.id)
+        .then(() => {
+            Product.find()
+                .then(result => {
+                    console.log(result)
+                    res.status(200).send(result)
+                })
+                .catch(err => {
+                    res.status(400).send(err)
+                })
+        })
+        .catch(err => {
+            res.status(400).send(err)
+        })
+})
+
+// update data
+app.post('/update-data/:id', (req, res) => {
+    Product.findByIdAndUpdate(req.params.id, req.body)
+        .then(() => {
+            Product.find()
+                .then(result => {
+                    console.log(result)
+                    res.status(200).send(result)
+                })
+                .catch(err => {
+                    res.status(400).send(err)
+                })
+        })
+        .catch(err => {
+            res.status(400).send(err)
+        })
+})
+
+// grouping data
+app.get('/grouping-data', (req, res) => {
+    Product.aggregate([
+        {
+            $group: {
+                _id: "$category",
+                count: { $sum: 1 }
+            }
+        }
+    ])
+        .then(result => {
+            res.status(200).send(result)
+        })
+        .catch(err => {
+            res.status(400).send(err)
+        })
+})
+
+// sorting and limiting data
+app.get('/sorting-data', (req, res) => {
+    Product.find().sort({ name: 1 }).limit(5).skip(3)
+        .then(result => {
+            res.status(200).send(result)
+        })
+        .catch(err => {
+            res.status(400).send(err)
+        })
+})
 
 app.listen(PORT, () => console.log(`Server Running at PORT : ${PORT}`))
