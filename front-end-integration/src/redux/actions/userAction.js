@@ -7,19 +7,27 @@ export const login = (data) => {
         Axios.post(`${URL_API}/login`, data)
             .then(res => {
                 console.log(res.data)
-                if (res.data.length !== 0) {
-                    localStorage.setItem('idUser', res.data[0].idusers)
 
-                    dispatch({
-                        type: 'LOGIN',
-                        payload: res.data[0]
-                    })
-                } else {
-                    dispatch({
-                        type: 'FAILED_LOGIN',
-                        payload: 'Username/Password is Invalid'
-                    })
-                }
+                localStorage.setItem('token', res.data.token)
+
+                dispatch({
+                    type: 'LOGIN',
+                    payload: res.data.dataUser
+                })
+
+                // if (res.data.length !== 0) {
+                //     localStorage.setItem('idUser', res.data[0].idusers)
+
+                //     dispatch({
+                //         type: 'LOGIN',
+                //         payload: res.data[0]
+                //     })
+                // } else {
+                //     dispatch({
+                //         type: 'FAILED_LOGIN',
+                //         payload: 'Username/Password is Invalid'
+                //     })
+                // }
             })
             .catch(err => {
                 console.log(err)
@@ -46,17 +54,17 @@ export const logout = () => {
 
 export const keepLogin = () => {
     return (dispatch) => {
-        const idUser = localStorage.getItem('idUser')
+        const token = localStorage.getItem('token')
 
-        if (idUser) {
-            Axios.get(`${URL_API}/keeplogin/${idUser}`)
-                .then(res => {
-                    dispatch({
-                        type: 'LOGIN',
-                        payload: res.data[0]
-                    })
-                })
-        }
+        // if (token) {
+        //     Axios.get(`${URL_API}/keeplogin/${token}`)
+        //         .then(res => {
+        //             dispatch({
+        //                 type: 'LOGIN',
+        //                 payload: res.data[0]
+        //             })
+        //         })
+        // }
     }
 }
 
