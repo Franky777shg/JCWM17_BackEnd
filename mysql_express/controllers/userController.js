@@ -1,6 +1,7 @@
 const { db } = require('../database')
 const crypto = require('crypto')
 const { createToken } = require('../helpers/jwt')
+const transporter = require('../helpers/nodemailer')
 
 module.exports = {
     login: (req, res) => {
@@ -16,7 +17,7 @@ module.exports = {
                 console.log(err)
                 res.status(400).send(err)
             }
-            result[0]
+            console.log(result[0])
 
             let token = createToken({
                 idusers: result[0].idusers
@@ -55,6 +56,19 @@ module.exports = {
                         console.log(err2)
                         res.status(400).send(err2)
                     }
+                    console.log(result2)
+
+                    let token = createToken({
+                        idusers: result2.insertId
+                    })
+
+                    let info = transporter.sendMail({
+                        from: '"ADMIN" <frengky.sihombing.777@gmail.com>', // sender address
+                        to: `${email}`, // list of receivers
+                        subject: `Email Verification for ${username}`, // Subject line
+                        text: 'Hello World', // plain text body
+                        html: `<a href="http://localhost:3000/verification/${token}">Click Here to Verify Your Account!</a>`, // html body
+                    });
 
                     res.status(200).send('berhasil')
                 })
@@ -62,7 +76,8 @@ module.exports = {
         })
     },
     keeplogin: (req, res) => {
-        const getUser = `select * from users where idusers = ${db.escape(req.params.id)}`
+        console.log(req.user)
+        const getUser = `select * from users where idusers = ${db.escape(req.user.idusers)}`
 
         db.query(getUser, (err, result) => {
             if (err) {
@@ -70,7 +85,22 @@ module.exports = {
                 res.status(400).send(err)
             }
 
+            console.log(result)
             res.status(200).send(result)
+        })
+    },
+    verification: (req, res) => {
+        console.log(req.user)
+        const updateUser = `update users set status = 'verified' where idusers = ${db.escape(req.user.idusers)}`
+
+        db.query(updateUser, (err, result) => {
+            if (err) {
+                console.log(err)
+                res.status(400).send(err)
+            }
+
+            console.log(result)
+            res.status(200).send('berhasil')
         })
     }
 }

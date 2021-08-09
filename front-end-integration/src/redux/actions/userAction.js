@@ -45,7 +45,7 @@ export const closeModal = () => {
 
 export const logout = () => {
     return (dispatch) => {
-        localStorage.removeItem('idUser')
+        localStorage.removeItem('token')
         dispatch({
             type: 'LOG_OUT'
         })
@@ -56,15 +56,20 @@ export const keepLogin = () => {
     return (dispatch) => {
         const token = localStorage.getItem('token')
 
-        // if (token) {
-        //     Axios.get(`${URL_API}/keeplogin/${token}`)
-        //         .then(res => {
-        //             dispatch({
-        //                 type: 'LOGIN',
-        //                 payload: res.data[0]
-        //             })
-        //         })
-        // }
+        if (token) {
+            Axios.post(`${URL_API}/keeplogin`, {}, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+                .then(res => {
+                    console.log(res.data[0])
+                    dispatch({
+                        type: 'LOGIN',
+                        payload: res.data[0]
+                    })
+                })
+        }
     }
 }
 
@@ -91,6 +96,22 @@ export const closeModalFailedRegis = () => {
     return (dispatch) => {
         dispatch({
             type: 'CLOSE_MODAL_FAILED_REGIS'
+        })
+    }
+}
+
+export const verification = (token) => {
+    return (dispatch) => {
+        Axios.post(`${URL_API}/verification`, {}, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+        .then(res => {
+            console.log(res.data)
+        })
+        .catch(err => {
+            console.log(err)
         })
     }
 }

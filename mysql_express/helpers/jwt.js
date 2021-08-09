@@ -7,6 +7,7 @@ module.exports = {
     },
     verifyToken: (req, res, next) => {
         let result = jwt.verify(req.token, process.env.JWT_KEY)
+        console.log(result)
 
         req.user = result
 

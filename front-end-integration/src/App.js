@@ -6,6 +6,7 @@ import { connect } from 'react-redux'
 import HomePage from './pages/home';
 import LoginPage from './pages/login';
 import RegisPage from './pages/register';
+import VerificationPage from './pages/verification';
 
 // import action
 import { keepLogin } from './redux/actions'
@@ -22,6 +23,7 @@ class App extends React.Component {
           <Route path="/" component={HomePage} exact />
           <Route path="/login" component={LoginPage} />
           <Route path="/register" component={RegisPage} />
+          <Route path="/verification/:token" component={VerificationPage} />
         </Switch>
       </div>
     )

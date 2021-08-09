@@ -67,7 +67,8 @@ class RegisPage extends React.Component {
         let body = {
             username,
             email,
-            password
+            password,
+            status: 'unverified'
         }
         console.log(body)
 
