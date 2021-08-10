@@ -9,7 +9,10 @@ module.exports = {
 
         let hashPassword = crypto.createHmac('sha1', 'hash123').update(req.body.password).digest('hex')
 
-        const getUser = `select * from users where username = ${db.escape(username)} and password = ${db.escape(hashPassword)};`
+        const getUser = `select * from users u
+        join profile p
+        on u.idusers = p.idusers
+        where username = ${db.escape(username)} and password = ${db.escape(hashPassword)};`
         console.log(getUser)
 
         db.query(getUser, (err, result) => {
@@ -56,28 +59,40 @@ module.exports = {
                         console.log(err2)
                         res.status(400).send(err2)
                     }
-                    console.log(result2)
 
                     let token = createToken({
                         idusers: result2.insertId
                     })
 
-                    let info = transporter.sendMail({
-                        from: '"ADMIN" <frengky.sihombing.777@gmail.com>', // sender address
-                        to: `${email}`, // list of receivers
-                        subject: `Email Verification for ${username}`, // Subject line
-                        text: 'Hello World', // plain text body
-                        html: `<a href="http://localhost:3000/verification/${token}">Click Here to Verify Your Account!</a>`, // html body
-                    });
+                    const addProfile = `insert into profile (idusers) values (${db.escape(result2.insertId)})`;
 
-                    res.status(200).send('berhasil')
+                    db.query(addProfile, (errProfile, resultProfile) => {
+                        if(errProfile) {
+                            console.log(errProfile)
+                            res.status(400).send(errProfile)
+                        }
+
+                        let info = transporter.sendMail({
+                            from: '"ADMIN" <frengky.sihombing.777@gmail.com>', // sender address
+                            to: `${email}`, // list of receivers
+                            subject: `Email Verification for ${username}`, // Subject line
+                            text: 'Hello World', // plain text body
+                            html: `<a href="http://localhost:3000/verification/${token}">Click Here to Verify Your Account!</a>`, // html body
+                        });
+
+                        res.status(200).send('berhasil')
+                    })
+
                 })
             }
         })
     },
     keeplogin: (req, res) => {
         console.log(req.user)
-        const getUser = `select * from users where idusers = ${db.escape(req.user.idusers)}`
+        const getUser = `select * from users u
+        join profile p
+        on u.idusers = p.idusers
+        where u.idusers = ${db.escape(req.user.idusers)};`
 
         db.query(getUser, (err, result) => {
             if (err) {

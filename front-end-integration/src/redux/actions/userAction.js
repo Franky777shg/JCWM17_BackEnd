@@ -107,11 +107,44 @@ export const verification = (token) => {
                 'Authorization': `Bearer ${token}`
             }
         })
-        .then(res => {
-            console.log(res.data)
+            .then(res => {
+                console.log(res.data)
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    }
+}
+
+export const uploadFile = (data, id) => {
+    return (dispatch) => {
+        Axios.post(`http://localhost:2000/profile/upload/${id}`, data, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
         })
-        .catch(err => {
-            console.log(err)
-        })
+            .then(res => {
+                console.log(res.data)
+
+                const token = localStorage.getItem('token')
+
+                if (token) {
+                    Axios.post(`${URL_API}/keeplogin`, {}, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    })
+                        .then(res => {
+                            console.log(res.data[0])
+                            dispatch({
+                                type: 'LOGIN',
+                                payload: res.data[0]
+                            })
+                        })
+                }
+            })
+            .catch(err => {
+                console.log(err)
+            })
     }
 }

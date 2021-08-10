@@ -32,7 +32,10 @@ class NavigationBar extends React.Component {
                             <Dropdown.Menu>
                                 {this.props.username
                                     ?
-                                    <Dropdown.Item onClick={this.props.logout}>Logout</Dropdown.Item>
+                                    <>
+                                        <Dropdown.Item onClick={this.props.logout}>Logout</Dropdown.Item>
+                                        <Dropdown.Item as={Link} to="/profile">Profile</Dropdown.Item>
+                                    </>
                                     :
                                     <>
                                         <Dropdown.Item as={Link} to="/login">Login</Dropdown.Item>

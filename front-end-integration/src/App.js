@@ -7,6 +7,7 @@ import HomePage from './pages/home';
 import LoginPage from './pages/login';
 import RegisPage from './pages/register';
 import VerificationPage from './pages/verification';
+import ProfilePage from './pages/profile';
 
 // import action
 import { keepLogin } from './redux/actions'
@@ -24,6 +25,7 @@ class App extends React.Component {
           <Route path="/login" component={LoginPage} />
           <Route path="/register" component={RegisPage} />
           <Route path="/verification/:token" component={VerificationPage} />
+          <Route path="/profile" component={ProfilePage} />
         </Switch>
       </div>
     )
