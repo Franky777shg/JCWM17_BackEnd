@@ -18,7 +18,9 @@ class App extends React.Component {
     this.state = {
       msg: [],
       username: '',
-      nsp: ''
+      nsp: '',
+      messageRoom1: [],
+      notifRoom1: ''
     }
   }
 
@@ -35,11 +37,30 @@ class App extends React.Component {
     })
   }
 
-  onSend = () => {
-    const message = this.refs.message.value
+  onJoinRoom1 = (room) => {
+    const socket = io(URL_API + this.state.nsp)
+
+    let dataUser = {
+      room,
+      username: this.state.username
+    }
+    socket.emit('JoinRoom1', dataUser)
+
+    socket.on('NotifJoinRoom1', notif => {
+      this.setState({ notifRoom1: notif })
+    })
+
+    socket.on('room1Msg', updateMsg => {
+      this.setState({ messageRoom1: updateMsg })
+    })
+  }
+
+  onSend = (room) => {
+    const message = room === null ? this.refs.message.value : this.refs.messageRoom.value
     const username = this.state.username
 
     const body = {
+      room,
       username,
       message
     }
@@ -51,15 +72,28 @@ class App extends React.Component {
         console.log(res.data)
         alert('Message Send ✔')
         this.refs.message.value = ""
+        this.refs.messageRoom.value = ""
       })
       .catch(err => {
         console.log(err)
         this.refs.message.value = ""
+        this.refs.messageRoom.value = ""
       })
   }
 
   onRenderTBody = () => {
     return this.state.msg.map((item, index) => {
+      return (
+        <tr key={index}>
+          <td>{item.username}</td>
+          <td>{item.message}</td>
+        </tr>
+      )
+    })
+  }
+
+  onRenderMsgRoom1 = () => {
+    return this.state.messageRoom1.map((item, index) => {
       return (
         <tr key={index}>
           <td>{item.username}</td>
@@ -75,6 +109,7 @@ class App extends React.Component {
         <NavigationBar />
         <Container>
           <h1>Chat App</h1>
+          <h2>Global Room</h2>
           <InputGroup className="mb-3">
             <InputGroup.Text id="basic-addon1">@</InputGroup.Text>
             <FormControl
@@ -101,7 +136,29 @@ class App extends React.Component {
             ref="message"
             className="mb-3"
           />
-          <Button variant="success" onClick={this.onSend}>Send Message</Button>
+          <Button className="mb-3" variant="success" onClick={() => this.onSend(null)}>Send Message</Button>
+
+          <h2 className="mt-3">Room 1</h2>
+          <h3>{this.state.notifRoom1}</h3>
+          <Button variant="success" onClick={() => this.onJoinRoom1('Room 1')}>Join Room 1</Button>
+          <Table striped bordered hover variant="dark" className="mt-3">
+            <thead>
+              <tr>
+                <th>Username</th>
+                <th>Message</th>
+              </tr>
+            </thead>
+            <tbody>
+              {this.onRenderMsgRoom1()}
+            </tbody>
+          </Table>
+          <FormControl
+            as="textarea"
+            placeholder="Write your Message"
+            ref="messageRoom"
+            className="mb-3"
+          />
+          <Button variant="success" onClick={() => this.onSend('Room 1')}>Send Message</Button>
         </Container>
       </div>
     );

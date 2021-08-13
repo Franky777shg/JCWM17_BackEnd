@@ -14,16 +14,25 @@ app.use(express.json())
 const io = socketIO(server)
 let arrMsg = []
 let channelMsg = []
+let userRoom1 = []
+let room1Msg = []
 app.io = io
 app.arrMsg = arrMsg
 
 app.post('/sendmsg', (req, res) => {
     if (req.query.namespace === 'default') {
-        console.log(req.body)
-        arrMsg.push(req.body)
+        if (req.body.room) {
+            room1Msg.push(req.body)
 
-        io.emit('chat msg', arrMsg)
-        res.status(200).send(arrMsg)
+            io.in(req.body.room).emit('room1Msg', room1Msg)
+        } else {
+            console.log(req.body)
+            arrMsg.push(req.body)
+
+            io.emit('chat msg', arrMsg)
+        }
+        
+        res.status(200).send('berhasil')
     } else if (req.query.namespace === 'channel') {
         console.log(req.body)
         channelMsg.push(req.body)
@@ -33,9 +42,16 @@ app.post('/sendmsg', (req, res) => {
     }
 })
 
+// namespace default
 io.on('connection', socket => {
     socket.on('JoinChat', data => {
         console.log(data)
+    })
+
+    socket.on('JoinRoom1', data => {
+        socket.join(data.room)
+        userRoom1.push({ ...data, id: socket.id })
+        io.in(data.room).emit('NotifJoinRoom1', `${data.username} just entered the room1`)
     })
 
     socket.on('disconnect', () => {
@@ -43,6 +59,7 @@ io.on('connection', socket => {
     })
 })
 
+// namespace custom namanya channel
 const channelNsp = io.of('/channel')
 channelNsp.on('connection', socket => {
     socket.on('JoinChat', data => {
