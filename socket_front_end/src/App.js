@@ -17,13 +17,16 @@ class App extends React.Component {
     super(props);
     this.state = {
       msg: [],
-      username: ''
+      username: '',
+      nsp: ''
     }
   }
 
-  onJoinChat = () => {
+  onJoinChat = (nsp) => {
+    this.setState({ nsp })
+
     const username = this.state.username
-    const socket = io(URL_API)
+    const socket = io(URL_API + nsp)
 
     socket.emit('JoinChat', { username })
     socket.on('chat msg', updateMsg => {
@@ -40,9 +43,10 @@ class App extends React.Component {
       username,
       message
     }
-    console.log(body)
 
-    Axios.post(`${URL_API}/sendmsg`, body)
+    let namespace = this.state.nsp === '/' ? 'default' : 'channel'
+
+    Axios.post(`${URL_API}/sendmsg?namespace=${namespace}`, body)
       .then(res => {
         console.log(res.data)
         alert('Message Send ✔')
@@ -78,7 +82,8 @@ class App extends React.Component {
               onChange={(e) => this.setState({ username: e.target.value })}
             />
           </InputGroup>
-          <Button variant="success" onClick={this.onJoinChat}>Join Chat</Button>
+          <Button variant="success" onClick={() => this.onJoinChat('/')}>Join</Button>
+          <Button variant="success" onClick={() => this.onJoinChat('/channel')}>Join Channel</Button>
           <Table striped bordered hover variant="dark" className="mt-3">
             <thead>
               <tr>
